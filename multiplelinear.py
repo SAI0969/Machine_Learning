@@ -1,49 +1,58 @@
+
 import numpy as np
 
+# Dataset
 X = np.array([
-    [2, 7],
-    [3, 6],
-    [4, 8],
-    [5, 7],
-    [6, 9]
+    [1, 2],
+    [2, 4],
+    [3, 5]
 ], dtype=float)
 
+Y = np.array([5, 7, 9], dtype=float)
 
-Y = np.array([65, 70, 80, 85, 95], dtype=float)
-
-
-weight1 = 0
-weight2 = 0
-bias = 0
+# Initialize parameters
+w1 = 0
+w2 = 0
+b = 0
 
 learning_rate = 0.01
-epochs = 1000
+epochs = 3
 n = len(X)
 
+# Gradient Descent
 for epoch in range(epochs):
 
-   
-    Y_pred = (weight1 * X[:,0]) + (weight2 * X[:,1]) + bias
+    # Predicted values
+    Y_pred = w1 * X[:, 0] + w2 * X[:, 1] + b
 
+    # Error
     error = Y_pred - Y
 
-    
-    dw1 = (2 / n) * np.sum(error * X[:,0])
-    dw2 = (2 / n) * np.sum(error * X[:,1])
+    # Cost (Mean Squared Error)
+    loss = np.mean(error ** 2)
+
+    # Gradients
+    dw1 = (2 / n) * np.sum(error * X[:, 0])
+    dw2 = (2 / n) * np.sum(error * X[:, 1])
     db = (2 / n) * np.sum(error)
 
-   
-    weight1 = weight1 - learning_rate * dw1
-    weight2 = weight2 - learning_rate * dw2
-    bias = bias - learning_rate * db
+    # Update parameters
+    w1 = w1 - learning_rate * dw1
+    w2 = w2 - learning_rate * dw2
+    b = b - learning_rate * db
 
-print("Weight1 :", weight1)
-print("Weight2 :", weight2)
-print("Bias :", bias)
 
-new_x1 = 5     
-new_x2 = 8     
+# Final parameters
+print("\nFinal Parameters")
+print("Weight1 =", w1)
+print("Weight2 =", w2)
+print("Bias =", b)
 
-prediction = (weight1 * new_x1) + (weight2 * new_x2) + bias
+# Prediction
+x1 = 5
+x2 = 6
 
-print("The predicted value is", prediction)
+prediction = w1 * x1 + w2 * x2 + b
+
+print("\nPrediction for x1 =", x1, "x2 =", x2)
+print("Predicted Value =", prediction)
