@@ -1,67 +1,51 @@
-print("Polynomial")
-
 import numpy as np
 
-X = np.array([
-    [2, 7],
-    [3, 6],
-    [4, 8],
-    [5, 7],
-    [6, 9]
-], dtype=float)
+# Dataset
+X = np.array([1, 2, 3, 4, 5], dtype=float)
+Y = np.array([2, 5, 10, 17, 26], dtype=float)
 
-Y = np.array([65, 70, 80, 85, 95], dtype=float)
+# Initialize parameters
+w1 = 0
+w2 = 0
+b = 0
 
-x1 = X[:, 0]
-x2 = X[:, 1]
-x1_sq = x1 ** 2
-x2_sq = x2 ** 2
-
-weight1 = 0
-weight2 = 0
-weight3 = 0
-weight4 = 0
-bias = 0
-
-learning_rate = 0.0001
-epochs = 1000
+learning_rate = 0.01
+epochs = 4
 n = len(X)
 
+# Gradient Descent
 for epoch in range(epochs):
 
-    Y_pred = (weight1 * x1) + (weight2 * x2) + \
-             (weight3 * x1_sq) + (weight4 * x2_sq) + bias
+    # Prediction
+    Y_pred = w1 * X + w2 * (X ** 2) + b
 
+    # Error
     error = Y_pred - Y
 
-    dw1 = (2 / n) * np.sum(error * x1)
-    dw2 = (2 / n) * np.sum(error * x2)
-    dw3 = (2 / n) * np.sum(error * x1_sq)
-    dw4 = (2 / n) * np.sum(error * x2_sq)
+    # Cost
+    loss = np.mean(error ** 2)
+
+    # Gradients
+    dw1 = (2 / n) * np.sum(error * X)
+    dw2 = (2 / n) * np.sum(error * (X ** 2))
     db = (2 / n) * np.sum(error)
 
-    weight1 = weight1 - learning_rate * dw1
-    weight2 = weight2 - learning_rate * dw2
-    weight3 = weight3 - learning_rate * dw3
-    weight4 = weight4 - learning_rate * dw4
-    bias = bias - learning_rate * db
+    # Update parameters
+    w1 -= learning_rate * dw1
+    w2 -= learning_rate * dw2
+    b -= learning_rate * db
 
-print("Weight1 (x1):", weight1)
-print("Weight2 (x2):", weight2)
-print("Weight3 (x1²):", weight3)
-print("Weight4 (x2²):", weight4)
-print("Bias:", bias)
+    if epoch % 1 == 0:
+        print(f"Epoch {epoch}  Loss = {loss:.4f}")
 
-new_x1 = 5
-new_x2 = 8
+print("\nFinal Parameters")
+print("Weight for x =", w1)
+print("Weight for x² =", w2)
+print("Bias =", b)
 
-prediction = (weight1 * new_x1) + \
-             (weight2 * new_x2) + \
-             (weight3 * new_x1**2) + \
-             (weight4 * new_x2**2) + bias
+# Prediction
+new_x = 6
+prediction = w1 * new_x + w2 * (new_x ** 2) + b
 
-
-print("The predicted value is:", prediction)
-
-rmse = np.sqrt(np.mean((Y - Y_pred) ** 2))
-print("RMSE:", rmse)
+print("\nPrediction for x =", new_x)
+print("Predicted Value =", prediction)
