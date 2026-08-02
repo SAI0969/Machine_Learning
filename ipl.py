@@ -1,45 +1,49 @@
 import pandas as pd
 import numpy as np
 
+# Read CSV file
 df = pd.read_csv("ipl2013.csv")
 
+# Fill missing numeric values
+df = df.fillna(df.mean(numeric_only=True))
+
+# Keep only numeric columns
 numeric = df.select_dtypes(include=np.number)
 
+# Correlation Matrix (Optional)
+corr = numeric.corr()
+print(corr)
+
+# Features and Target
 X = numeric.drop(columns=["SOLD PRICE"]).values
 y = numeric["SOLD PRICE"].values
 
-weights = np.zeros(X.shape[1])
-bias = 0
+# Add bias column (Intercept)
+X = np.c_[np.ones(len(X)), X]
 
-learning_rate = 0.0000000001
-epochs = 4
+# Train-Test Split (80:20)
+indices = np.random.permutation(len(X))
+split = int(0.8 * len(X))
 
-n = len(X)
+train_idx = indices[:split]
+test_idx = indices[split:]
 
-best_rmse = float("inf")
+X_train = X[train_idx]
+X_test = X[test_idx]
 
-for epoch in range(epochs):
+y_train = y[train_idx]
+y_test = y[test_idx]
 
-    y_pred = np.dot(X, weights) + bias
+# Normal Equation
+beta = np.linalg.inv(X_train.T @ X_train) @ X_train.T @ y_train
 
-    error = y_pred - y
+# Prediction
+prediction = X_test @ beta
 
-    dw = (2 / n) * np.dot(X.T, error)
-    db = (2 / n) * np.sum(error)
+# RMSE
+rmse = np.sqrt(np.mean((y_test - prediction) ** 2))
 
-    weights = weights - learning_rate * dw
-    bias = bias - learning_rate * db
+print("\nRegression Coefficients:")
+print(beta)
 
-    y_pred_new = np.dot(X, weights) + bias
-
-    rmse = np.sqrt(np.mean((y - y_pred_new) ** 2))
-
-    print("Iteration:", epoch + 1)
-    print("RMSE:", rmse)
-
-    if rmse < best_rmse:
-        best_rmse = rmse
-
-print("\nFinal Weights:", weights)
-print("Final Bias:", bias)
-print("Reduced RMSE:", best_rmse)
+print("\nRMSE:", rmse)
